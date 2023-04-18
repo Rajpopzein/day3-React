@@ -6,39 +6,49 @@ import BookList from './components/BookList'
 import axios from 'axios'
 
 function App() {
+    const [deleteres,setDeleteres] = useState()
     const [books,setBooks] = useState([])
 
-    const fetchBook = async()=>{
-      const responce = await axios.get('htttp://localhost:3002/books')
-      setBooks(responce.data)
-    }
-
     useEffect(()=>{
-      fetchBook()
+      fetchBook() 
     },[])
 
+    const fetchBook = async()=>{
+      const responce = await axios.get('https://bookdhowapi.onrender.com/user/all')
+      // console.log(responce.data.data)
+      setBooks(await responce.data.data)
+    }
+
     const deleteBookById = (id) =>{
-      const updateBook = books.filter((book)=>{
-        return book.id !== id;
+      console.log('clicked')
+      const updateBook = books.filter(async(book)=>{
+        if(book.id == id){
+          console.log(book)
+          const res = await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`)
+          setDeleteres(res)
+        }
+        return book.id !== id
       })
       setBooks(updateBook)
     }
 
+    useEffect(()=>{
+      fetchBook()
+    },[deleteres])
 
     const createBook = async(title) => {
-      const responce = await axios.post('http://localhost:3002/books',{
+      const responce = await axios.post('https://bookdhowapi.onrender.com/user',{
         title
       })
-        const updatedarr = [
+        const  updatedarr = [
             ...books,
-            responce.data
+           await responce.data.data
         ]
         setBooks(updatedarr)
-        
     }
 
     const updateBook = (id, newTitle) =>{
-      const updateBooks = books.map((book)=>{
+      const updateBooks = books !== undefined && books.map((book)=>{
           if(book.id === id){
             return{...book, title:newTitle}
           }
@@ -46,13 +56,12 @@ function App() {
           return book;
       });
 
-      setBooks(updateBooks) 
+      setBooks(...books,updateBooks) 
     }
-    
   return (
     <div className='app'>
       <h1>Reading list</h1>
-        <BookList onEdit={updateBook} books={books} onDelete= {deleteBookById} />
+        <BookList onEdit={updateBook} books={books} onDelete= {deleteBookById}  />
         <BookCreate onCreate = {createBook} />
     </div>
   )
