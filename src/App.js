@@ -80,8 +80,8 @@ function App() {
             <Col lg={6}>
               <Dna
                 visible={true}
-                height="300"
-                width="450"
+                height="230"
+                width="350"
                 ariaLabel="dna-loading"
                 wrapperStyle={{}}
                 wrapperClass="dna-wrapper"
