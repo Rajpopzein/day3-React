@@ -56,7 +56,7 @@ function App() {
     const updateBook = async(id, newTitle) =>{
        const updateBooks =  books !== undefined && books.map(async(book)=>{
           if(book.id === id){
-            await axios.put(`http://localhost:4000/user/${id}`,{"title":newTitle}).then((res)=>{
+            await axios.put(`https://bookdhowapi.onrender.com/user/${id}`,{"title":newTitle}).then((res)=>{
               setDat(res)
             })
             return{...book, title:newTitle}
