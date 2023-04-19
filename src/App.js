@@ -26,8 +26,10 @@ function App() {
       const updateBook = books.filter(async(book)=>{
         if(book.id === id){
           console.log(book)
-          const res = await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`)
-          setDeleteres(res)
+          await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`).then((res)=>{
+            fetchBook()
+          })
+          // setDeleteres(res)
         }
         return book.id !== id
       })
@@ -57,7 +59,7 @@ function App() {
        const updateBooks =  books !== undefined && books.map(async(book)=>{
           if(book.id === id){
             await axios.put(`https://bookdhowapi.onrender.com/user/${id}`,{"title":newTitle}).then((res)=>{
-              setDat(res)
+              fetchBook()
             })
             return{...book, title:newTitle}
           }
