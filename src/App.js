@@ -8,21 +8,23 @@ import axios from 'axios'
 function App() {
     const [deleteres,setDeleteres] = useState()
     const [books,setBooks] = useState([])
+    const [dat,setDat] = useState(null)
 
     useEffect(()=>{
-      fetchBook() 
+      setTimeout(()=>{
+        fetchBook()
+      },5000)
     },[])
 
     const fetchBook = async()=>{
       const responce = await axios.get('https://bookdhowapi.onrender.com/user/all')
-      // console.log(responce.data.data)
       setBooks(await responce.data.data)
     }
 
     const deleteBookById = (id) =>{
       console.log('clicked')
       const updateBook = books.filter(async(book)=>{
-        if(book.id == id){
+        if(book.id === id){
           console.log(book)
           const res = await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`)
           setDeleteres(res)
@@ -33,8 +35,12 @@ function App() {
     }
 
     useEffect(()=>{
-      fetchBook()
-    },[deleteres])
+      setTimeout(()=>{
+        fetchBook()
+      },5000)
+       
+     
+    },[dat])
 
     const createBook = async(title) => {
       const responce = await axios.post('https://bookdhowapi.onrender.com/user',{
@@ -47,21 +53,23 @@ function App() {
         setBooks(updatedarr)
     }
 
-    const updateBook = (id, newTitle) =>{
-      const updateBooks = books !== undefined && books.map((book)=>{
+    const updateBook = async(id, newTitle) =>{
+       const updateBooks =  books !== undefined && books.map(async(book)=>{
           if(book.id === id){
+            await axios.put(`http://localhost:4000/user/${id}`,{"title":newTitle}).then((res)=>{
+              setDat(res)
+            })
             return{...book, title:newTitle}
           }
-
           return book;
       });
-
-      setBooks(...books,updateBooks) 
+      setBooks(...books, updateBooks) 
+      
     }
   return (
     <div className='app'>
       <h1>Reading list</h1>
-        <BookList onEdit={updateBook} books={books} onDelete= {deleteBookById}  />
+        <BookList onEdit={updateBook} books={books} onDelete= {deleteBookById} />
         <BookCreate onCreate = {createBook} />
     </div>
   )
