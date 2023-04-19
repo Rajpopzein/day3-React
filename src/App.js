@@ -11,9 +11,7 @@ function App() {
     const [dat,setDat] = useState(null)
 
     useEffect(()=>{
-      setTimeout(()=>{
         fetchBook()
-      },5000)
     },[])
 
     const fetchBook = async()=>{
