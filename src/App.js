@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setDeleteres(false);
-    }, 6600);
+    }, 7000);
   }, [deleteres]);
 
   const fetchBook = async () => {
@@ -56,7 +56,7 @@ function App() {
 
   const updateBook = async (id, newTitle) => {
     setDeleteres(true);
-    var responce = await axios.put(`http://localhost:4000/user/${id}`, {
+    var responce = await axios.put(`https://bookdhowapi.onrender.com/user/${id}`, {
       title: newTitle,
     });
     const updateBooks = books.map((book) => {
