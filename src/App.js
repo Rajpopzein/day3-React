@@ -1,78 +1,106 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react'
-import BookCreate from './components/BookCreate'
-import './index.css'
-import BookList from './components/BookList'
-import axios from 'axios'
+import React, { useEffect } from "react";
+import { useState } from "react";
+import BookCreate from "./components/BookCreate";
+import "./index.css";
+import BookList from "./components/BookList";
+import axios from "axios";
+import { Dna } from "react-loader-spinner";
+import { Col, Divider, Row } from "antd";
 
 function App() {
-    const [deleteres,setDeleteres] = useState()
-    const [books,setBooks] = useState([])
-    const [dat,setDat] = useState(null)
+  const [deleteres, setDeleteres] = useState(false);
+  const [books, setBooks] = useState([]);
+  const [dat, setDat] = useState(false);
 
-    useEffect(()=>{
-        fetchBook()
-    },[])
+  useEffect(() => {
+    fetchBook();
+    setDat(true);
+  }, []);
 
-    const fetchBook = async()=>{
-      const responce = await axios.get('https://bookdhowapi.onrender.com/user/all')
-      setBooks(await responce.data.data)
-    }
+  useEffect(() => {
+    setTimeout(() => {
+      setDat(false);
+    }, 7000);
+  }, [dat]);
 
-    const deleteBookById = (id) =>{
-      console.log('clicked')
-      const updateBook = books.filter(async(book)=>{
-        if(book.id === id){
-          console.log(book)
-          await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`).then((res)=>{
-            fetchBook()
-          })
-          // setDeleteres(res)
-        }
-        return book.id !== id
-      })
-      setBooks(updateBook)
-    }
+  useEffect(() => {
+    setTimeout(() => {
+      setDeleteres(false);
+    }, 6600);
+  }, [deleteres]);
 
-    useEffect(()=>{
-      setTimeout(()=>{
-        fetchBook()
-      },5000)
-       
-     
-    },[dat])
+  const fetchBook = async () => {
+    const responce = await axios.get(
+      "https://bookdhowapi.onrender.com/user/all"
+    );
+    setBooks(await responce.data.data);
+  };
 
-    const createBook = async(title) => {
-      const responce = await axios.post('https://bookdhowapi.onrender.com/user',{
-        title
-      })
-        const  updatedarr = [
-            ...books,
-           await responce.data.data
-        ]
-        setBooks(updatedarr)
-    }
+  const deleteBookById = async (id) => {
+    setDeleteres(true);
+    await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`);
+    const updateBook = books.filter((book) => {
+      return book.id !== id;
+    });
+    setBooks(updateBook);
+  };
 
-    const updateBook = async(id, newTitle) =>{
-       const updateBooks =  books !== undefined && books.map(async(book)=>{
-          if(book.id === id){
-            await axios.put(`https://bookdhowapi.onrender.com/user/${id}`,{"title":newTitle}).then((res)=>{
-              fetchBook()
-            })
-            return{...book, title:newTitle}
-          }
-          return book;
-      });
-      setBooks(...books, updateBooks) 
-      
-    }
+  const createBook = async (title) => {
+    setDeleteres(true);
+    const responce = await axios.post("https://bookdhowapi.onrender.com/user", {
+      title,
+    });
+    const updatedarr = [...books, await responce.data.data];
+    setBooks(updatedarr);
+  };
+
+  const updateBook = async (id, newTitle) => {
+    setDeleteres(true);
+    var responce = await axios.put(`http://localhost:4000/user/${id}`, {
+      title: newTitle,
+    });
+    const updateBooks = books.map((book) => {
+      if (book.id === id) {
+        return { ...book, ...responce.data.data };
+      }
+      return book;
+    });
+    setBooks(updateBooks);
+  };
+  // useEffect(()=>{
+  //   document.body.style.overflow="hidden";
+  //   return()=>(document.body.style.overflow="scroll");
+  // })
   return (
-    <div className='app'>
-      <h1>Reading list</h1>
-        <BookList onEdit={updateBook} books={books} onDelete= {deleteBookById} />
-        <BookCreate onCreate = {createBook} />
-    </div>
-  )
+    <>
+      <div className="app">
+        <h1>Reading list</h1>
+        {deleteres === true || dat === true ? (
+          <Row justify="space-around" align="middle">
+            <Col lg={6}>
+              <Dna
+                visible={true}
+                height="300"
+                width="450"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+              />
+            </Col>
+          </Row>
+        ) : (
+          <div>
+            <BookList
+              onEdit={updateBook}
+              books={books}
+              onDelete={deleteBookById}
+            />
+          </div>
+        )}
+        <BookCreate onCreate={createBook} />
+      </div>
+    </>
+  );
 }
 
-export default App
+export default App;
