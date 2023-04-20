@@ -1,17 +1,13 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect ,useContext} from "react";
 import BookCreate from "./components/BookCreate";
 import "./index.css";
 import BookList from "./components/BookList";
-import axios from "axios";
 import { Dna } from "react-loader-spinner";
-import { Col, Divider, Row } from "antd";
+import { Col, Row } from "antd";
+import BooksContext from "./context/books";
 
 function App() {
-  const [deleteres, setDeleteres] = useState(false);
-  const [books, setBooks] = useState([]);
-  const [dat, setDat] = useState(false);
-
+  const {fetchBook,dat,setDat,deleteres,setDeleteres} = useContext(BooksContext)
   useEffect(() => {
     fetchBook();
     setDat(true);
@@ -29,44 +25,7 @@ function App() {
     }, 7000);
   }, [deleteres]);
 
-  const fetchBook = async () => {
-    const responce = await axios.get(
-      "https://bookdhowapi.onrender.com/user/all"
-    );
-    setBooks(await responce.data.data);
-  };
-
-  const deleteBookById = async (id) => {
-    setDeleteres(true);
-    await axios.delete(`https://bookdhowapi.onrender.com/user/${id}`);
-    const updateBook = books.filter((book) => {
-      return book.id !== id;
-    });
-    setBooks(updateBook);
-  };
-
-  const createBook = async (title) => {
-    setDeleteres(true);
-    const responce = await axios.post("https://bookdhowapi.onrender.com/user", {
-      title,
-    });
-    const updatedarr = [...books, await responce.data.data];
-    setBooks(updatedarr);
-  };
-
-  const updateBook = async (id, newTitle) => {
-    setDeleteres(true);
-    var responce = await axios.put(`https://bookdhowapi.onrender.com/user/${id}`, {
-      title: newTitle,
-    });
-    const updateBooks = books.map((book) => {
-      if (book.id === id) {
-        return { ...book, ...responce.data.data };
-      }
-      return book;
-    });
-    setBooks(updateBooks);
-  };
+  
   // useEffect(()=>{
   //   document.body.style.overflow="hidden";
   //   return()=>(document.body.style.overflow="scroll");
@@ -91,13 +50,10 @@ function App() {
         ) : (
           <div>
             <BookList
-              onEdit={updateBook}
-              books={books}
-              onDelete={deleteBookById}
             />
           </div>
         )}
-        <BookCreate onCreate={createBook} />
+        <BookCreate/>
       </div>
     </>
   );

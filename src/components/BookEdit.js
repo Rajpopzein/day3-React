@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState , useContext} from 'react'
+import BooksContext from '../context/books'
 
 function BookEdit({books,onSubmit}) {
   const [title,setTitle] = useState(books.title)
 
+
+  const {updateBook} = useContext(BooksContext)
+
   const handleSubmit = (e) =>{
     e.preventDefault()
-    onSubmit(books.id,title)
+    onSubmit()
+    updateBook(books.id,title)
     
   }
 
