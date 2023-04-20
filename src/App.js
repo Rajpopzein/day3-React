@@ -8,6 +8,7 @@ import BooksContext from "./context/books";
 
 function App() {
   const {fetchBook,dat,setDat,deleteres,setDeleteres} = useContext(BooksContext)
+ 
   useEffect(() => {
     fetchBook();
     setDat(true);
@@ -16,13 +17,13 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setDat(false);
-    }, 7000);
+    }, 7500);
   }, [dat]);
 
   useEffect(() => {
     setTimeout(() => {
       setDeleteres(false);
-    }, 7000);
+    }, 3000);
   }, [deleteres]);
 
   

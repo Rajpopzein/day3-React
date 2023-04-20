@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState,useCallback } from "react";
 import axios from "axios";
 
 const BooksContext = createContext()
@@ -8,12 +8,12 @@ function Provider({children}){
     const [deleteres, setDeleteres] = useState(false);
     const [dat, setDat] = useState(false);
 
-    const fetchBook = async () => {
+    const fetchBook = useCallback(async () => {
         const responce = await axios.get(
           "https://bookdhowapi.onrender.com/user/all"
         );
         setBooks(await responce.data.data);
-      };
+      },[]);
 
       const deleteBookById = async (id) => {
         setDeleteres(true);
